@@ -18,15 +18,14 @@ static int begun = 0;
 static int our_turn = 0;
 static Player our_number;
 
-int msg_begin(int argc, char *argv[])
+void msg_begin(int argc, char *argv[])
 {
     UNUSED(argc);
     UNUSED(argv);
     begun = 1;
-    return 0;
 }
 
-int msg_discard(int argc, char *argv[])
+void msg_discard(int argc, char *argv[])
 {
     REQUIRE_ARGC(2);
 
@@ -36,11 +35,9 @@ int msg_discard(int argc, char *argv[])
         ERROR("Invalid card name '%s'", argv[1]);
 
     deck_expend(c);
-
-    return 0;
 }
 
-int msg_draw(int argc, char *argv[])
+void msg_draw(int argc, char *argv[])
 {
     REQUIRE_ARGC(2);
 
@@ -55,18 +52,15 @@ int msg_draw(int argc, char *argv[])
         /* take turn */
         our_turn = 0;
     }
-
-    return 0;
 }
 
-int msg_ident(int argc, char *argv[])
+void msg_ident(int argc, char *argv[])
 {
     REQUIRE_ARGC(2);
     our_number = atoi(argv[1]);
-    return 0;
 }
 
-int msg_out(int argc, char *argv[])
+void msg_out(int argc, char *argv[])
 {
     REQUIRE_ARGC(3);
 
@@ -75,11 +69,9 @@ int msg_out(int argc, char *argv[])
 
     player_has_card(p, CARD_INVALID);
     deck_expend(c);
-
-    return 0;
 }
 
-int msg_played(int argc, char *argv[])
+void msg_played(int argc, char *argv[])
 {
     REQUIRE_ARGC(3);
 
@@ -94,39 +86,33 @@ int msg_played(int argc, char *argv[])
 
     /* don't keep track of card counts for our player */
     if (p == our_number)
-        return 0;
+        return;
 
     player_played_card(p, c);
 
     if (c == CARD_PRIESTESS)
         player_protected(p);
-
-    return 0;
 }
 
-int msg_player(int argc, char *argv[])
+void msg_player(int argc, char *argv[])
 {
     REQUIRE_ARGC(2);
 
     Player curr_number = atoi(argv[1]);
 
     our_turn = (curr_number == our_number);
-
-    return 0;
 }
 
-int msg_protected(int argc, char *argv[])
+void msg_protected(int argc, char *argv[])
 {
     REQUIRE_ARGC(2);
 
     Player p = atoi(argv[1]);
 
     player_protected(p);
-
-    return 0;
 }
 
-int msg_reveal(int argc, char *argv[])
+void msg_reveal(int argc, char *argv[])
 {
     REQUIRE_ARGC(3);
 
@@ -134,11 +120,9 @@ int msg_reveal(int argc, char *argv[])
     Card c = card_intern(argv[2]);
 
     player_has_card(p, c);
-
-    return 0;
 }
 
-int msg_swap(int argc, char *argv[])
+void msg_swap(int argc, char *argv[])
 {
     REQUIRE_ARGC(2);
 
@@ -148,8 +132,6 @@ int msg_swap(int argc, char *argv[])
     hand_remove(hand_at(0));
 
     hand_insert(c);
-
-    return 0;
 }
 
 static void require_argc(const char *function, const char *file,

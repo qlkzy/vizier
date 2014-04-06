@@ -7,7 +7,7 @@
 
 typedef struct {
     const char *name;
-    int (*fn)(int,char*[]);
+    void (*fn)(int,char*[]);
 } Namefun;
 
 static Namefun handlers[] = {
@@ -23,16 +23,16 @@ static Namefun handlers[] = {
     {"swap",      msg_swap},
 };
 
-int dispatch(int argc, char *argv[])
+void dispatch(int argc, char *argv[])
 {
     /* ignore blank commands */
     if (argc == 0 || argv[0] == NULL)
-        return 0;
+        return;
 
     for (Namefun *nfp = handlers; nfp < SENTINEL(handlers); nfp++) {
         if (!strcmp(argv[0], nfp->name))
-            return (nfp->fn)(argc, argv);
+            (nfp->fn)(argc, argv);
     }
-    
+
     ERROR("Unknown command '%s'", argv[0]);
 }
