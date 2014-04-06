@@ -3,7 +3,7 @@ CFLAGS += -g -Wall -Wextra -Werror -std=c99
 SRC := $(wildcard *.c)
 OBJ := $(SRC:.c=.o)
 
-qlkzy-ai: $(OBJ)
+vizier: $(OBJ)
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
 deps.mk:
