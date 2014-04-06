@@ -28,4 +28,6 @@
 
 #define UNUSED(x) ((void)(x))
 
+int istreq(const char *s1, const char *s2);
+
 #endif /* UTIL_H */

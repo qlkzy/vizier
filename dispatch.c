@@ -30,8 +30,10 @@ void dispatch(int argc, char *argv[])
         return;
 
     for (Namefun *nfp = handlers; nfp < SENTINEL(handlers); nfp++) {
-        if (!strcmp(argv[0], nfp->name))
+        if (istreq(argv[0], nfp->name)) {
             (nfp->fn)(argc, argv);
+            return;
+        }
     }
 
     ERROR("Unknown command '%s'", argv[0]);

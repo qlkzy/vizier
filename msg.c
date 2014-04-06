@@ -3,6 +3,7 @@
 #include "card.h"
 #include "deck.h"
 #include "hand.h"
+#include "play.h"
 #include "player.h"
 #include "util.h"
 
@@ -27,14 +28,16 @@ void msg_begin(int argc, char *argv[])
 
 void msg_discard(int argc, char *argv[])
 {
-    REQUIRE_ARGC(2);
+    REQUIRE_ARGC(3);
 
-    Card c = card_intern(argv[1]);
+    Player p = atoi(argv[1]);
+    Card c = card_intern(argv[2]);
 
     if (c == CARD_INVALID)
         ERROR("Invalid card name '%s'", argv[1]);
 
     deck_expend(c);
+    player_card_unknown(p);
 }
 
 void msg_draw(int argc, char *argv[])
@@ -49,7 +52,7 @@ void msg_draw(int argc, char *argv[])
     hand_insert(c);
 
     if (begun && our_turn) {
-        /* take turn */
+        play();
         our_turn = 0;
     }
 }
@@ -58,6 +61,8 @@ void msg_ident(int argc, char *argv[])
 {
     REQUIRE_ARGC(2);
     our_number = atoi(argv[1]);
+    printf("Vizier\n");
+    fflush(stdout);
 }
 
 void msg_out(int argc, char *argv[])

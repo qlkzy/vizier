@@ -9,4 +9,10 @@ vizier: $(OBJ)
 deps.mk:
 	$(CC) $(CPPFLAGS) $(CFLAGS) -MM $(SRC) > deps.mk
 
+.PHONY: clean
+clean:
+	-rm -f *.o
+	-rm -f deps.mk
+	-rm -f vizier
+
 -include deps.mk

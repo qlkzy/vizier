@@ -9,9 +9,6 @@ static int protected[MAX_PLAYER_ID];
 
 #define ASSERT_PLAYER_BOUNDS(player)                                    \
     do {                                                                \
-        ASSERT(player > 0,                                              \
-               "Player '%s' must be positive but was %d",               \
-               #player, (player));                                      \
         ASSERT(player < NELEM(player_cards),                            \
                "Player '%s' must be less than %lu but was %d",          \
                #player, NELEM(player_cards), (player));                 \
@@ -24,10 +21,9 @@ void player_has_card(Player player, Card c)
     player_cards[player] = c;
 }
 
-void player_card_unknown(Player player, Card c)
+void player_card_unknown(Player player)
 {
     ASSERT_PLAYER_BOUNDS(player);
-    ASSERT_CARD_BOUNDS(c);
     player_cards[player] = deck_average_remaining();
 }
 
@@ -57,19 +53,6 @@ int player_is_protected(Player player)
     return protected[player];
 }
 
-Player player_with_best_card(void)
-{
-    Card best = CARD_INVALID;
-    Player best_player;
-    for (Player p = 0; p < NELEM(player_cards); p++) {
-        if (player_estimated_card(p) > best) {
-            best = player_estimated_card(p);
-            best_player = p;
-        }
-    }
-    return best_player;
-}
-
 Player player_with_best_card_unprotected(void)
 {
     Card best = CARD_INVALID;
@@ -81,4 +64,17 @@ Player player_with_best_card_unprotected(void)
         }
     }
     return best_player;
+}
+
+Player player_with_worst_card_unprotected(void)
+{
+    Card worst = CARD_COUNT;
+    Player worst_player;
+    for (Player p = 0; p < NELEM(player_cards); p++) {
+        if (!player_is_protected(p) && player_estimated_card(p) < worst) {
+            worst = player_estimated_card(p);
+            worst_player = p;
+        }
+    }
+    return worst_player;
 }
