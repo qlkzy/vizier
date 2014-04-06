@@ -15,6 +15,17 @@
         abort();                                                        \
     } while (0)
 
+#define ASSERT(cond, ...)                                               \
+    do {                                                                \
+        if (!(cond)) {                                                  \
+            fprintf(stderr, "%s:%d: error: assertion failed in %s: ", __FILE__, __LINE__, __FUNCTION__); \
+            fprintf(stderr, __VA_ARGS__);                               \
+            fprintf(stderr, "\n");                                      \
+            abort();                                                    \
+        }                                                               \
+    } while (0)
+
+
 #define UNUSED(x) ((void)(x))
 
 #endif /* UTIL_H */

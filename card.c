@@ -41,15 +41,13 @@ Card card_intern(char *s)
 
 const char *card_name(Card c)
 {
-    if (c >= CARD_COUNT)
-        ERROR("Tried to get name of invalid card %d", c);
+    ASSERT_CARD_BOUNDS(c);
     return names[c];
 }
 
 int card_number_in_deck(Card c)
 {
-    if (c >= CARD_COUNT)
-        ERROR("Tried to get name of invalid card %d", c);
+    ASSERT_CARD_BOUNDS(c);
     return number_in_deck[c];
 }
 

@@ -1,6 +1,16 @@
 #ifndef CARD_H
 #define CARD_H
 
+#include "util.h"
+
+#define ASSERT_CARD_BOUNDS(card)                                        \
+    do {                                                                \
+        ASSERT((card) < CARD_COUNT,                                     \
+               "Card '%s' must be less than %d but was %d",             \
+               #card, CARD_COUNT, (card));                              \
+    } while (0)
+
+
 typedef enum {
     CARD_INVALID,
     CARD_SOLDIER,

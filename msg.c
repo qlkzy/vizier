@@ -3,6 +3,7 @@
 #include "card.h"
 #include "deck.h"
 #include "hand.h"
+#include "player.h"
 #include "util.h"
 
 #include <stdlib.h>
@@ -13,6 +14,7 @@
 static void require_argc(const char *function, const char *file,
                          int line, int argc, int min);
 
+static int begun = 0;
 static int our_turn = 0;
 static int our_number;
 
@@ -20,6 +22,7 @@ int msg_begin(int argc, char *argv[])
 {
     UNUSED(argc);
     UNUSED(argv);
+    begun = 1;
     return 0;
 }
 
@@ -28,10 +31,10 @@ int msg_discard(int argc, char *argv[])
     REQUIRE_ARGC(2);
 
     Card c = card_intern(argv[1]);
-    
+
     if (c == CARD_INVALID)
         ERROR("Invalid card name '%s'", argv[1]);
-    
+
     deck_expend(c);
 
     return 0;
@@ -48,7 +51,7 @@ int msg_draw(int argc, char *argv[])
 
     hand_insert(c);
 
-    if (our_turn) {
+    if (begun && our_turn) {
         /* take turn */
         our_turn = 0;
     }
@@ -65,8 +68,14 @@ int msg_ident(int argc, char *argv[])
 
 int msg_out(int argc, char *argv[])
 {
-    UNUSED(argc);
-    UNUSED(argv);
+    REQUIRE_ARGC(3);
+
+    Player p = atoi(argv[1]);
+    Card c = card_intern(argv[2]);
+
+    player_has_card(p, CARD_INVALID);
+    deck_expend(c);
+
     return 0;
 }
 
@@ -74,12 +83,15 @@ int msg_played(int argc, char *argv[])
 {
     REQUIRE_ARGC(3);
 
+    Player p = atoi(argv[1]);
     Card c = card_intern(argv[2]);
 
     if (c == CARD_INVALID)
         ERROR("Invalid card name '%s'", argv[2]);
 
     deck_expend(c);
+
+    player_played_card(p, c);
 
     return 0;
 }
@@ -105,15 +117,27 @@ int msg_protected(int argc, char *argv[])
 
 int msg_reveal(int argc, char *argv[])
 {
-    UNUSED(argc);
-    UNUSED(argv);
+    REQUIRE_ARGC(3);
+
+    Player p = atoi(argv[1]);
+    Card c = card_intern(argv[2]);
+
+    player_has_card(p, c);
+
     return 0;
 }
 
 int msg_swap(int argc, char *argv[])
 {
-    UNUSED(argc);
-    UNUSED(argv);
+    REQUIRE_ARGC(2);
+
+    Card c = card_intern(argv[1]);
+
+    /* for now, just swap with the first card in our hand */
+    hand_remove(hand_at(0));
+
+    hand_insert(c);
+
     return 0;
 }
 

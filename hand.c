@@ -6,11 +6,14 @@ static int card_counts[CARD_COUNT];
 
 void hand_insert(Card c)
 {
+    ASSERT_CARD_BOUNDS(c);
     card_counts[c]++;
 }
 
 void hand_remove(Card c)
 {
+    ASSERT_CARD_BOUNDS(c);
+
     card_counts[c]--;
 
     if (card_counts[c] < 0)
