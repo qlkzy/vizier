@@ -16,7 +16,7 @@ static void require_argc(const char *function, const char *file,
 
 static int begun = 0;
 static int our_turn = 0;
-static int our_number;
+static Player our_number;
 
 int msg_begin(int argc, char *argv[])
 {
@@ -91,7 +91,15 @@ int msg_played(int argc, char *argv[])
 
     deck_expend(c);
 
+
+    /* don't keep track of card counts for our player */
+    if (p == our_number)
+        return 0;
+
     player_played_card(p, c);
+
+    if (c == CARD_PRIESTESS)
+        player_protected(p);
 
     return 0;
 }
@@ -100,18 +108,21 @@ int msg_player(int argc, char *argv[])
 {
     REQUIRE_ARGC(2);
 
-    int curr_number = atoi(argv[1]);
+    Player curr_number = atoi(argv[1]);
 
-    if (curr_number == our_number)
-        our_turn = 1;
+    our_turn = (curr_number == our_number);
 
     return 0;
 }
 
 int msg_protected(int argc, char *argv[])
 {
-    UNUSED(argc);
-    UNUSED(argv);
+    REQUIRE_ARGC(2);
+
+    Player p = atoi(argv[1]);
+
+    player_protected(p);
+
     return 0;
 }
 

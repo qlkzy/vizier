@@ -15,6 +15,12 @@ void player_played_card(Player player, Card c);
 
 Card player_estimated_card(Player player);
 
+void player_protected(Player player);
+
+int player_is_protected(Player player);
+
 Player player_with_best_card(void);
+
+Player player_with_best_card_unprotected(void);
 
 #endif /* PLAYER_H */
