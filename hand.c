@@ -2,52 +2,36 @@
 
 #include "util.h"
 
-#define HAND_MAX 8
-
-static Card hand[HAND_MAX];
+static int card_counts[CARD_COUNT];
 
 void hand_insert(Card c)
 {
-    for (Card *pc = hand; pc < SENTINEL(hand); pc++) {
-        if (!*pc) {
-            *pc = c;
-            return;
-        }
-    }
-    
-    ERROR("Tried to insert card %d into hand, but it was full with %lu cards",
-          c, NELEM(hand));
+    card_counts[c]++;
 }
 
 void hand_remove(Card c)
 {
-    for (Card *pc = hand; pc < SENTINEL(hand); pc++) {
-        if (*pc == c) {
-            *pc = CARD_INVALID;
-            return;
-        }
-    }
-    
-    ERROR("Tried to remove card %d from hand, but it was not present", c); 
+    card_counts[c]--;
+
+    if (card_counts[c] < 0)
+        ERROR("Negative number of card %d (%s) in hand", c, card_name(c));
 }
 
 unsigned int hand_count(void)
 {
     unsigned int i = 0;
 
-    for (Card *pc = hand; pc < SENTINEL(hand); pc++)
-        if (*pc) i++;
+    for (Card c = CARD_INVALID; c < NELEM(card_counts); c++)
+        i += card_counts[c];
 
     return i;
 }
 
-Card hand_at(unsigned int i)
+Card hand_at(int i)
 {
-    for (Card *pc = hand; pc < SENTINEL(hand); pc++) {
-        if (*pc) {
-            if (--i == 0)
-                return *pc;
-        }
+    for (Card c = CARD_INVALID; c < NELEM(card_counts); c++) {
+        i -= card_counts[c];
+        if (i < 0) return c;
     }
     
     ERROR("Tried to access element %d of hand, "
